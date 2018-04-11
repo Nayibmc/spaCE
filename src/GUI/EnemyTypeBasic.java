@@ -36,38 +36,46 @@ public class EnemyTypeBasic extends EnemyType{
         enemySprite.draw(g);
     }
 
+    ////////////////////////////////~~~~~~~~~~~~~~~~~~~~~~~~Mov~~~~~~~~~~~~~~~~~~~~~~~~////////////////////////////////
     @Override
-    public void update(double delta, Player player, Shields shields) {
+    public void update(double delta, Player player, Shields shields){
         enemySprite.update(delta);
 
-        enemySprite.setxPos(enemySprite.getxPos() - (delta * speed));
+        ////////////////////////////////~~~~~~~~~~~~~~~~~~~~~~~~X~~~~~~~~~~~~~~~~~~~~~~~~///////////////////////////////
+        //Se podría hacer que sólo se pida la pos al inicio, después se maneja desde Java
+        enemySprite.setxPos(enemySprite.getxPos() - (delta*speed));
+        //double nextXPos = mainWindow.gameJSON;
+        //enemySprite.setxPos(nextXPos);
+
         this.getRect().x = (int) enemySprite.getxPos();
 
-        if (shootTimer.timerEvent(shootTime)) {
+        if (shootTimer.timerEvent(shootTime)){
             getBulletHandler().addBullet(new EnemyBasicBullet(getRect().x, getRect().y));
             shootTime = new Random().nextInt(12000);
         }
     }
 
+    //Cambia el signo de la velocidad, para que se muevan hacia el lado contrario, y los hace acercarse al jugador
     @Override
-    public void changeDirection(double delta) {
+    public void changeDirection(double delta){
         speed *= -1.15d;
         enemySprite.setxPos(enemySprite.getxPos() - (delta * speed));
         this.getRect().x = (int) enemySprite.getxPos();
 
+        ////////////////////////////////~~~~~~~~~~~~~~~~~~~~~~~~Y~~~~~~~~~~~~~~~~~~~~~~~~///////////////////////////////
         enemySprite.setyPos(enemySprite.getyPos() + (delta * 15));
+
         this.getRect().y = (int) enemySprite.getyPos();
     }
 
     @Override
-    public boolean deathScene() {
+    public boolean deathScene(){
         if(!enemySprite.isAnimated())
             return false;
 
         if(enemySprite.isSpriteAnimDestroyed()) {
             return true;
         }
-
         return false;
     }
 
@@ -94,7 +102,7 @@ public class EnemyTypeBasic extends EnemyType{
     }
 
     @Override
-    public boolean isOutOfBounds() {
+    public boolean isOutOfBounds(){
         if(rect.x > 0 && rect.x < mainWindow.WIDTH - rect.width)
             return false;
         return true;

@@ -31,6 +31,7 @@ public class Sprite{
             BufferedImage pSprite = ImageIO.read(url);
             int spriteWidth = pSprite.getWidth() / columns;
             int spriteHeight = pSprite.getHeight() / rows;
+
             for(int y = 0; y < rows; y++) {
                 for(int x = 0; x < columns; x++){
                     addSprite(pSprite

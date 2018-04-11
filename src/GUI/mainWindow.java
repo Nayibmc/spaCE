@@ -1,14 +1,18 @@
 package GUI;
 
 import java.awt.image.BufferStrategy;
-
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
-
 import javax.swing.JFrame;
 
-public class mainWindow extends Canvas implements Runnable{
+import ClientServer.Client;
+import ClientServer.Constantes;
+import org.json.simple.JSONObject;
+
+//+++++++++++++++++++++++++++++++
+
+public class mainWindow extends Canvas implements Runnable, Constantes{
     //Constantes y variables
     private static final long serialVersionUID = 1L;
     public static int WIDTH = 800, HEIGHT = 600;
@@ -17,15 +21,14 @@ public class mainWindow extends Canvas implements Runnable{
     private boolean running = false;
     private Thread thread;
 
-    //Configuración de la pantalla
-    public mainWindow(){
-        this.setSize(WIDTH, HEIGHT);
-        this.setFocusable(true);
+    //Socket////////////////////////////////////////////
+    public static Client mp;
+    public static int clientType;       //Para saber si es jugador o espectador
 
-        screen = new Screens(this);
-        screen.setScreen((byte) 0);
-    }
+    //JSON con los datos del servidor
+    public static JSONObject gameJSON = new JSONObject();
 
+    //////////////////////////////~~~~~~~~~~~~~~~~~~~~~~~~MAIN~~~~~~~~~~~~~~~~~~~~~~~~////////////////////////////////
     public static void main(String[] args){
         //Se crea la ventana
         mainWindow display = new mainWindow();
@@ -37,6 +40,32 @@ public class mainWindow extends Canvas implements Runnable{
         frame.setResizable(false);
         frame.setVisible(true);
         display.start();    //Empieza la ejecución
+
+        ////////////////////////////~~~~~~~~~~~~~~~~~~~~~~~~Socket~~~~~~~~~~~~~~~~~~~~~~~~//////////////////////////////
+        mp = new Client(8080, "127.0.0.1");
+        (new Thread(mp)).start();
+
+        while (true){
+            try{
+                if (mp.ifNewMsg() == SI_MSG)
+                    System.out.println(mp.getMsgFromServer());
+                Thread.sleep(2000);
+                mp.SendMsg(LEFT);
+            }
+            catch (InterruptedException e){
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //Configuración de la pantalla
+    public mainWindow(){
+        this.setSize(WIDTH, HEIGHT);
+        this.setFocusable(true);
+
+        screen = new Screens(this, mp);
+        screen.setScreen((byte) 0);
     }
 
     //Inicia el thread
@@ -88,7 +117,6 @@ public class mainWindow extends Canvas implements Runnable{
                 timer += 1000;
                 FPS = frames;
                 frames = 0;
-                System.out.println(FPS);
             }
 
             draw(buffStrat);

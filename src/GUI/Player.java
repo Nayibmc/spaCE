@@ -1,5 +1,7 @@
 package GUI;
 
+import org.json.simple.JSONObject;
+
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
@@ -10,8 +12,10 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
-public class Player implements KeyListener
-{
+import static ClientServer.Constantes.*;    //------------- ¿static?
+import static GUI.mainWindow.mp;            //-------------
+
+public class Player implements KeyListener{
     private final double speed = 5.0d;
     private int health;
 
@@ -32,7 +36,7 @@ public class Player implements KeyListener
         this.startYPos = yPos;
         this.width = width;
         this.height = height;
-        this.health = 3;
+        this.health = 5;
 
         rect = new Rectangle((int) xPos,(int) yPos+25, width, height-25);
 
@@ -56,9 +60,11 @@ public class Player implements KeyListener
         if(right && !left && xPos < mainWindow.WIDTH-width){
             xPos += speed * delta;
             rect.x = (int) xPos;
+            mp.SendMsg(RIGHT);          /////////
         }if(!right && left && xPos > 10){
             xPos -= speed * delta;
             rect.x = (int) xPos;
+            mp.SendMsg(LEFT);           /////////
         }
 
         playerWeapons.update(delta, shields);
@@ -67,41 +73,42 @@ public class Player implements KeyListener
             playerWeapons.shootBullet(xPos, yPos, 5, 5);
         }
     }
-
+////////////////////////////////////////////////////////////Movimiento del jugador
     @Override
     public void keyPressed(KeyEvent e){
         int key = e.getKeyCode();
+
         if (key == KeyEvent.VK_D || key == KeyEvent.VK_RIGHT){
             right = true;
+            //mp.SendMsg(RIGHT);
         }
         else if (key == KeyEvent.VK_A || key == KeyEvent.VK_LEFT){
             left = true;
+            //mp.SendMsg(LEFT);
         }
 
         if (key == KeyEvent.VK_SPACE){
             shoot = true;
-        }
+            //mp.SendMsg(SHOOT);
+        }//////////////////¿Enviarlo sólo para activar y desactivar el movimiento?
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(KeyEvent e){
         int key = e.getKeyCode();
+
         if(key == KeyEvent.VK_D || key == KeyEvent.VK_RIGHT){
             right = false;
         }else if (key == KeyEvent.VK_A || key == KeyEvent.VK_LEFT){
             left = false;
         }
-
         if (key == KeyEvent.VK_SPACE){
             shoot = false;
         }
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
-        // TODO Auto-generated method stub
-
-    }
+    public void keyTyped(KeyEvent e){}
 
     public void hit() {
         setHealth(getHealth()-1);
@@ -113,14 +120,15 @@ public class Player implements KeyListener
 
     public void setHealth(int health) {
         this.health = health;
+        mp.SendMsg(TERMINATE);          ///////////////////////////////////////////////////////////////
     }
 
     public Rectangle getRect() {
         return rect;
     }
 
-    public void reset() {
-        health = 3;
+    public void reset(){
+        health = 5;
         left = false;
         right = false;
         shoot = false;
@@ -130,5 +138,7 @@ public class Player implements KeyListener
         rect.x = (int) xPos;
         rect.y = (int) yPos+25;
         playerWeapons.reset();
+
+        mp.SendMsg(TERMINATE);      ///////////////////////////////////////////////////////////////
     }
 }

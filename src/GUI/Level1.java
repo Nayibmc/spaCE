@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 public class Level1 implements SuperLevel{
-
     private Player player;
     private ArrayList<EnemyType> enemies = new ArrayList<EnemyType>();
     private EnemyBulletHandler bulletHandler;
@@ -47,27 +46,30 @@ public class Level1 implements SuperLevel{
         bulletHandler.update(delta, shields, player);
     }
 
+    //Cambia la dirección de los enemigos si llegan a un borde lateral
     @Override
-    public void hasDirectionChange(double delta) {
+    public void hasDirectionChange(double delta){
         if(enemies == null)
             return;
 
         for(int i = 0; i < enemies.size(); i++){
             if(enemies.get(i).isOutOfBounds()){
-                changeDurectionAllEnemys(delta);
+                changeDirectionAllEnemys(delta);
             }
         }
     }
 
+    //Cambia la dirección y reproduce un sonido
     @Override
-    public void changeDurectionAllEnemys(double delta) {
+    public void changeDirectionAllEnemys(double delta){
         for(int i = 0; i < enemies.size(); i++){
             enemies.get(i).changeDirection(delta);
         }
-        if (beepboop) {
+        if (beepboop){
             beepboop = false;
             boop.play();
-        } else {
+        }
+        else{
             beepboop = true;
             beep.play();
         }
@@ -79,8 +81,8 @@ public class Level1 implements SuperLevel{
     }
 
     @Override
-    public void destroy() {
-
+    public void destroy(){
+        //////////////////////
     }
 
     @Override

@@ -1,11 +1,14 @@
 package GUI;
 
+import ClientServer.Client;
+import ClientServer.Constantes;
+
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 
-public class GameScreen extends ScreensAbs{
+public class GameScreen extends ScreensAbs implements Constantes{
     private Player player;
     private Shields shields;
     private Level1 level;
@@ -17,7 +20,7 @@ public class GameScreen extends ScreensAbs{
     private TickTimer gameOverTimer = new TickTimer(180);
     private TickTimer completeTimer = new TickTimer(180);
 
-    public GameScreen(Screens screen){
+    public GameScreen(Screens screen, Client mp){
         super(screen);
         shields = new Shields();
         bulletHandler = new EnemyBulletHandler();

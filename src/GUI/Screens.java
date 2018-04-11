@@ -1,5 +1,7 @@
 package GUI;
 
+import ClientServer.Client;
+
 import java.awt.Canvas;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -9,8 +11,9 @@ public class Screens{
     private Canvas canvas;
     private byte selectScreen = 0;
 
-    public Screens(Canvas canvas){
-        ScreensAbs game = new GameScreen(this);
+
+    public Screens(Canvas canvas, Client mp){
+        ScreensAbs game = new GameScreen(this, mp);
         screens.add(game);
         ScreensAbs menu = new MenuScreen(this);
         screens.add(menu);
